@@ -1,3 +1,5 @@
+package 백준_2504_괄호의값;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Stack;

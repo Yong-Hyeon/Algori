@@ -1,3 +1,5 @@
+package 백준_14719_빗물;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;

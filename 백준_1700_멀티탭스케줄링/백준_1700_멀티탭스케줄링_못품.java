@@ -1,3 +1,5 @@
+package 백준_1700_멀티탭스케줄링;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.LinkedList;

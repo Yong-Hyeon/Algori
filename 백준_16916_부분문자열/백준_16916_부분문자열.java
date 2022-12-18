@@ -1,3 +1,5 @@
+package 백준_16916_부분문자열;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 

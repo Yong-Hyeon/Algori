@@ -1,3 +1,5 @@
+package 백준_14888_연산자끼워넣기;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;

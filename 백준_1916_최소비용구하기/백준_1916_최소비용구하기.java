@@ -1,3 +1,5 @@
+package 백준_1916_최소비용구하기;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.*;
