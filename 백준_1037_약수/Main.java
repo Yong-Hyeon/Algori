@@ -8,17 +8,14 @@ public class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int N = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
+        int A = Integer.parseInt(st.nextToken());
+        int B = Integer.parseInt(st.nextToken());
+        int C = Integer.parseInt(st.nextToken());
 
-        int max = 1;
-        int min = 1000001;
-        for(int i = 0; i < N; i++){
-            int num = Integer.parseInt(st.nextToken());
-            max = Math.max(max, num);
-            min = Math.min(min, num);
-        }
-
-        System.out.println(max * min);
+        System.out.println((A+B)%C);
+        System.out.println(((A%C)+(B%C))%C);
+        System.out.println((A*B)%C);
+        System.out.println(((A%C)*(B%C))%C);
     }
 }
