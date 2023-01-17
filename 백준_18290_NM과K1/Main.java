@@ -13,7 +13,7 @@ public class Main {
         int M = Integer.parseInt(st.nextToken());
         int K = Integer.parseInt(st.nextToken());
         int[][] map = new int[N][M];
-        boolean[][] isSelected = new boolean[N][M];
+        int[][] isSelected = new int[N][M];
         int[][] delta = {{-1,0},{0,1},{1,0},{0,-1}};
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
@@ -25,14 +25,14 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                isSelected[i][j] = true;
+                isSelected[i][j]++;
                 for(int d = 0; d < 4; d++){
                     int nr = i + delta[d][0];
                     int nc = j + delta[d][1];
-                    if(nr < 0 || nr >= N || nc < 0 || nc >= M || isSelected[nr][nc]){
+                    if(nr < 0 || nr >= N || nc < 0 || nc >= M){
                         continue;
                     }
-                    isSelected[nr][nc] = true;
+                    isSelected[nr][nc]++;
                 }
                 check(K,N,M,1,map,map[i][j],isSelected,delta);
                 for(int d = 0; d < 4; d++){
@@ -41,9 +41,9 @@ public class Main {
                     if(nr < 0 || nr >= N || nc < 0 || nc >= M){
                         continue;
                     }
-                    isSelected[nr][nc] = false;
+                    isSelected[nr][nc]--;
                 }
-                isSelected[i][j] = false;
+                isSelected[i][j]--;
             }
         }
 
@@ -51,7 +51,7 @@ public class Main {
         System.out.println(max);
     }
 
-    static void check(int K, int N, int M, int cnt, int[][] map, int sum, boolean[][] isSelected, int[][] delta){
+    static void check(int K, int N, int M, int cnt, int[][] map, int sum, int[][] isSelected, int[][] delta){
         if(cnt == K){
             max = Math.max(sum,max);
             return;
@@ -59,28 +59,28 @@ public class Main {
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
-                if(isSelected[i][j]){
+                if(isSelected[i][j] > 0){
                     continue;
                 }
-                for(int d = 0; d < 4; d++){
-                    int nr = i + delta[d][0];
-                    int nc = j + delta[d][1];
-                    if(nr < 0 || nr >= N || nc < 0 || nc >= M || isSelected[nr][nc]){
-                        continue;
-                    }
-                    isSelected[nr][nc] = true;
-                }
-
-                isSelected[i][j] = true;
-                check(K, N, M, cnt + 1, map, sum + map[i][j], isSelected, delta);
-                isSelected[i][j] = false;
                 for(int d = 0; d < 4; d++){
                     int nr = i + delta[d][0];
                     int nc = j + delta[d][1];
                     if(nr < 0 || nr >= N || nc < 0 || nc >= M){
                         continue;
                     }
-                    isSelected[nr][nc] = false;
+                    isSelected[nr][nc]++;
+                }
+
+                isSelected[i][j]++;
+                check(K, N, M, cnt + 1, map, sum + map[i][j], isSelected, delta);
+                isSelected[i][j]--;
+                for(int d = 0; d < 4; d++){
+                    int nr = i + delta[d][0];
+                    int nc = j + delta[d][1];
+                    if(nr < 0 || nr >= N || nc < 0 || nc >= M){
+                        continue;
+                    }
+                    isSelected[nr][nc]--;
                 }
             }
         }
