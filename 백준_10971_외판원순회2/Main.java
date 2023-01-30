@@ -26,6 +26,9 @@ public class Main {
     }
 
     private static void dfs(int N, int start, int now, int[][] map, boolean[] isVisited, int cnt, int cost) {
+        if(cost > min){
+            return;
+        }
         if (start == now && cost > 0) {
             min = Math.min(min, cost);
             return;
