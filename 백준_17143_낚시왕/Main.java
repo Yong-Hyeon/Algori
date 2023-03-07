@@ -40,30 +40,29 @@ public class Main {
         int C = Integer.parseInt(st.nextToken());
         int M = Integer.parseInt(st.nextToken());
 
-        PriorityQueue<Shark>[][] pqMap = new PriorityQueue[R + 1][C + 1];
+        Shark[][] map = new Shark[R + 1][C + 1];
         List<Shark> sharks = new ArrayList<>();
         result = 0;
-        for (int i = 1; i <= C; i++) {
-            for (int j = 1; j <= R; j++) {
-                pqMap[j][i] = new PriorityQueue<>();
-            }
-        }
 
         for (int i = 0; i < M; i++) {
             st = new StringTokenizer(br.readLine());
             sharks.add(new Shark(i, Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()),
                     Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())));
-            pqMap[sharks.get(i).r][sharks.get(i).c].add(sharks.get(i));
+            map[sharks.get(i).r][sharks.get(i).c] = sharks.get(i);
         }
 
         for (int i = 1; i <= C; i++) {
+//            if(i%10==1){
+//                System.out.println(sharks.size());
+//            }
             for (int j = 1; j <= R; j++) {
 
-                if (!pqMap[j][i].isEmpty()) {
-                    Shark shark = pqMap[j][i].poll();
+                if (map[j][i] != null) {
+                    Shark shark = map[j][i];
                     result += shark.z;
                     int cnt = shark.cnt;
-                    sharks.remove(cnt);
+//                    sharks.remove(cnt);
+                    sharks.remove(shark);
                     break;
                 }
             }
@@ -72,9 +71,8 @@ public class Main {
                 break;
             }
             sharkSetting(sharks);
-            pqInit(R,C,pqMap);
 
-            sharkMove(R, C, sharks, pqMap);
+            map = sharkMove(R, C, sharks);
 
             sharkSetting(sharks);
         }
@@ -90,139 +88,161 @@ public class Main {
         }
     }
 
-    static void pqInit(int R, int C, PriorityQueue<Shark>[][] pqMap){
-        for (int i = 1; i <= C; i++) {
-            for (int j = 1; j <= R; j++) {
-                pqMap[j][i] = new PriorityQueue<>();
-//                pqMap[j][i].clear();
-            }
-        }
-    }
-    static void sharkMove(int R, int C, List<Shark> sharks, PriorityQueue<Shark>[][] pqMap) {
+    static Shark[][] sharkMove(int R, int C, List<Shark> sharks) {
         int size = sharks.size();
+//        PriorityQueue<Integer> deleteSharks = new PriorityQueue<>(Collections.reverseOrder());
+        Queue<Shark> deleteSharks = new LinkedList<>();
+        Shark[][] map = new Shark[R+1][C+1];
         for (int i = 0; i < size; i++) {
             Shark shark = sharks.get(i);
 
-            if (shark.d == 1) {
-                if (shark.r - 1 >= shark.s) {
-                    shark.r = shark.r - shark.s;
-                } else {
-                    shark.d = 2;
-                    int speed = shark.s;
-                    speed = speed - (shark.r - 1);
-                    int share = speed / (R - 1);
-                    int remain = speed % (R - 1);
-                    if (share % 2 == 0) {
-                        if (remain == 0) {
-                            shark.r = 1;
-                            shark.d = 1;
-                        } else {
-                            shark.r = 1 + remain;
-                        }
-                    } else {
-                        if (remain == 0) {
-                            shark.r = R;
-                        } else {
-                            shark.r = R - remain;
-                        }
+            int speed = shark.s;
+            if(shark.d == 1 || shark.d == 2){
+                speed = speed % ((R - 1) * 2);
+            }else{
+                speed = speed % ((C - 1) * 2);
+            }
+
+            for(int j = 0; j < speed; j++){
+                int nr = shark.r + delta[shark.d-1][0];
+                int nc = shark.c + delta[shark.d-1][1];
+
+                if(nr < 1 || nr > R || nc < 1 || nc > C){
+                    if(shark.d % 2 == 0){
+                        shark.d--;
+                    }else{
+                        shark.d++;
                     }
+                    j--;
+                    continue;
                 }
-            } else if (shark.d == 2) {
-                if (shark.r + shark.s <= R) {
-                    shark.r = shark.r + shark.s;
-                } else {
-                    shark.d = 1;
-                    int speed = shark.s;
-                    speed = speed - (R - shark.r);
-                    int share = speed / (R - 1);
-                    int remain = speed % (R - 1);
-                    if (share % 2 == 0) {
-                        if (remain == 0) {
-                            shark.r = R;
-                            shark.d = 2;
-                        } else {
-                            shark.r = R - remain;
-                        }
-                    } else {
-                        if (remain == 0) {
-                            shark.r = 1;
-                        } else {
-                            shark.r = 1 + remain;
-                            shark.d = 2;
-                        }
-                    }
-                }
-            } else if (shark.d == 3) {
-                if (shark.c + shark.s <= C) {
-                    shark.c = shark.c + shark.s;
-                } else {
-                    shark.d = 4;
-                    int speed = shark.s;
-                    speed = speed - (C - shark.c);
-                    int share = speed / (C - 1);
-                    int remain = speed % (C - 1);
-                    if (share % 2 == 0) {
-                        if (remain == 0) {
-                            shark.c = C;
-                            shark.d = 3;
-                        } else {
-                            shark.c = C - remain;
-                        }
-                    } else {
-                        if (remain == 0) {
-                            shark.c = 1;
-                        } else {
-                            shark.c = 1 + remain;
-                            shark.d = 3;
-                        }
-                    }
-                }
-            } else if (shark.d == 4) {
-                if (shark.c - 1 >= shark.s) {
-                    shark.c = shark.c - shark.s;
-                } else {
-                    shark.d = 3;
-                    int speed = shark.s;
-                    speed = speed - (shark.c - 1);
-                    int share = speed / (C - 1);
-                    int remain = speed % (C - 1);
-                    if (share % 2 == 0) {
-                        if (remain == 0) {
-                            shark.c = 1;
-                            shark.d = 4;
-                        } else {
-                            shark.c = 1 + remain;
-                        }
-                    } else {
-                        if (remain == 0) {
-                            shark.c = C;
-                        } else {
-                            shark.c = C - remain;
-                        }
-                    }
+
+                shark.r = nr;
+                shark.c = nc;
+
+            }
+
+            // 예전에 푼 이동 로직
+//            if (shark.d == 1) {
+//                if (shark.r - 1 >= shark.s) {
+//                    shark.r = shark.r - shark.s;
+//                } else {
+//                    shark.d = 2;
+//                    int speed = shark.s;
+//                    speed = speed - (shark.r - 1);
+//                    int share = speed / (R - 1);
+//                    int remain = speed % (R - 1);
+//                    if (share % 2 == 0) {
+//                        if (remain == 0) {
+//                            shark.r = 1;
+//                            shark.d = 1;
+//                        } else {
+//                            shark.r = 1 + remain;
+//                        }
+//                    } else {
+//                        if (remain == 0) {
+//                            shark.r = R;
+//                        } else {
+//                            shark.r = R - remain;
+//                        }
+//                    }
+//                }
+//            } else if (shark.d == 2) {
+//                if (shark.r + shark.s <= R) {
+//                    shark.r = shark.r + shark.s;
+//                } else {
+//                    shark.d = 1;
+//                    int speed = shark.s;
+//                    speed = speed - (R - shark.r);
+//                    int share = speed / (R - 1);
+//                    int remain = speed % (R - 1);
+//                    if (share % 2 == 0) {
+//                        if (remain == 0) {
+//                            shark.r = R;
+//                            shark.d = 2;
+//                        } else {
+//                            shark.r = R - remain;
+//                        }
+//                    } else {
+//                        if (remain == 0) {
+//                            shark.r = 1;
+//                        } else {
+//                            shark.r = 1 + remain;
+//                            shark.d = 2;
+//                        }
+//                    }
+//                }
+//            } else if (shark.d == 3) {
+//                if (shark.c + shark.s <= C) {
+//                    shark.c = shark.c + shark.s;
+//                } else {
+//                    shark.d = 4;
+//                    int speed = shark.s;
+//                    speed = speed - (C - shark.c);
+//                    int share = speed / (C - 1);
+//                    int remain = speed % (C - 1);
+//                    if (share % 2 == 0) {
+//                        if (remain == 0) {
+//                            shark.c = C;
+//                            shark.d = 3;
+//                        } else {
+//                            shark.c = C - remain;
+//                        }
+//                    } else {
+//                        if (remain == 0) {
+//                            shark.c = 1;
+//                        } else {
+//                            shark.c = 1 + remain;
+//                            shark.d = 3;
+//                        }
+//                    }
+//                }
+//            } else if (shark.d == 4) {
+//                if (shark.c - 1 >= shark.s) {
+//                    shark.c = shark.c - shark.s;
+//                } else {
+//                    shark.d = 3;
+//                    int speed = shark.s;
+//                    speed = speed - (shark.c - 1);
+//                    int share = speed / (C - 1);
+//                    int remain = speed % (C - 1);
+//                    if (share % 2 == 0) {
+//                        if (remain == 0) {
+//                            shark.c = 1;
+//                            shark.d = 4;
+//                        } else {
+//                            shark.c = 1 + remain;
+//                        }
+//                    } else {
+//                        if (remain == 0) {
+//                            shark.c = C;
+//                        } else {
+//                            shark.c = C - remain;
+//                        }
+//                    }
+//                }
+//            }// 이동 끝
+            // 로직 끝
+            if(map[shark.r][shark.c] == null){
+                map[shark.r][shark.c] = shark;
+            }else{
+                if(map[shark.r][shark.c].z < shark.z){
+//                    deleteSharks.add(map[shark.r][shark.c].cnt);
+                    deleteSharks.add(map[shark.r][shark.c]);
+                    map[shark.r][shark.c] = shark;
+                }else{
+//                    deleteSharks.add(shark.cnt);
+                    deleteSharks.add(shark);
                 }
             }
-            pqMap[shark.r][shark.c].add(shark);
-        }
-        PriorityQueue<Integer> deleteSharks = new PriorityQueue<>(Collections.reverseOrder());
 
-        for (int i = 1; i <= R; i++) {
-            for (int j = 1; j <= C; j++) {
-                if (!pqMap[i][j].isEmpty()) {
-                    Shark temp = pqMap[i][j].poll();
-
-                    while (!pqMap[i][j].isEmpty()) {
-                        deleteSharks.add(pqMap[i][j].poll().cnt);
-                    }
-
-                    pqMap[i][j].add(temp);
-                }
-            }
         }
 
         while (!deleteSharks.isEmpty()) {
-            int delete = deleteSharks.poll();
+//            int delete = deleteSharks.poll();
+            Shark delete = deleteSharks.poll();
             sharks.remove(delete);
         }
+        return map;
     }
 }
