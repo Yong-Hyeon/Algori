@@ -2,9 +2,7 @@ package 백준_16946_벽부수고이동하기4;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -65,20 +63,20 @@ public class Main {
             }
         }
 
-        boolean[] isUsed = null;
+        Map<Integer, Boolean> isUsed = null;
         for(int i = 0; i < N; i++){
             for(int j = 0; j < M; j++){
                 if(map[i][j] == 1){
-                    isUsed = new boolean[setCnt];
+                    isUsed = new HashMap<>();
                     int sum = 1;
                     for(int d = 0; d < 4; d++){
                         int nr = i + delta[d][0];
                         int nc = j + delta[d][1];
-                        if(nr < 0 || nr >= N || nc < 0 || nc >= M || isUsed[set[nr][nc]]){
+                        if(nr < 0 || nr >= N || nc < 0 || nc >= M || isUsed.containsKey(set[nr][nc])){
                             continue;
                         }
                         sum += dp[nr][nc];
-                        isUsed[set[nr][nc]] = true;
+                        isUsed.put(set[nr][nc], true);
                     }
                     result[i][j] = sum % 10;
                 }
