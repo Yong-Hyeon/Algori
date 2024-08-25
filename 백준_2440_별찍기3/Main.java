@@ -1,0 +1,1 @@
+package 백준_2440_별찍기3;import java.util.*;public class Main {public static void main(String[] args) throws Exception{Scanner s=new Scanner(System.in);int n=s.nextInt();int i,j;for(i=n;i>0;i--){for(j=0;j<i;j++){System.out.print("*");}System.out.println();}}}
