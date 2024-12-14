@@ -1,0 +1,2 @@
+package 백준_4470_줄번호;
+import java.util.*;interface Main{static void main(String[]s){Scanner c=new Scanner(System.in);int i=0,N=c.nextInt();c.nextLine();while(N>i){System.out.println(++i+". "+c.nextLine());}}}
